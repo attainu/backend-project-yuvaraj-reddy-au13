@@ -1,0 +1,12 @@
+body{
+    background-color: aqua;
+}
+
+.login-container{
+    margin-top: 50px;
+    width : 300px;
+}
+
+p{
+    margin : 10px 0 !important
+}
