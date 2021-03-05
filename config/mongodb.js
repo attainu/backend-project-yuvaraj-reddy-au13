@@ -24,14 +24,20 @@
 
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/Project',  {
+mongoose.connect('mongodb://localhost:27017/CRUD',  {
                 useNewUrlParser : true,
                 useUnifiedTopology : true,
                 useFindAndModify : false,
                 useCreateIndex : true
             })
+
+
+
+// mongoose.connect('mongodb+srv://yuvaraj-reddy-au13:yuvaraj@3108@cluster0.4pbtw.mongodb.net/dailyStories?retryWrites=true&w=majority', {
+//     useNewUrlParser : true,
+//     useUnifiedTopology : true,
+//     useFindAndModify : false,
+//     useCreateIndex : true
+// })
 console.log('Connect to DB!!');
-
-
-// mongoose.connect('mongodb+srv://yuvaraj-reddy-au13:yuvaraj@3108@cluster0.4pbtw.mongodb.net/dailyStories?retryWrites=true&w=majority')
 
