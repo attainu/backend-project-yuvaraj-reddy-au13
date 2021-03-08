@@ -13,7 +13,8 @@ router.get('/',  (req, res)=>{
 
 router.get('/dashboard', ensureAuth, (req, res)=>{
     res.render('dashboard',{
-        layout : false
+        layout : false,
+        name : req.user.name
     })
 })
 
