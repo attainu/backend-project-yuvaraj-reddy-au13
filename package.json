@@ -1,15 +1,15 @@
 {
-  "name": "storybooks",
+  "name": "dailystories",
   "version": "1.0.0",
-  "description": "App for creating public and private stories",
-  "main": "app.js",
+  "description": "a blog application",
+  "main": "index.js.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index",
     "dev": "cross-env NODE_ENV=development nodemon index",
     "postinstall": "node ./scripts/post-install.js"
   },
-  "author": "Brad Traversy",
-  "license": "MIT",
+  "author": "yuvaraj & amit",
+  "license": "",
   "dependencies": {
     "connect-mongo": "^3.2.0",
     "dotenv": "^8.2.0",
@@ -19,7 +19,7 @@
     "fs-extra": "^9.1.0",
     "method-override": "^3.0.0",
     "moment": "^2.29.1",
-    "mongoose": "^5.11.18",
+    "mongoose": "^5.12.0",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
@@ -27,6 +27,6 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.7"
   }
 }
