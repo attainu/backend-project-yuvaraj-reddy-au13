@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  
   firstName: {
     type: String,
     required: true
