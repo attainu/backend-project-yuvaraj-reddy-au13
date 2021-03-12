@@ -14,15 +14,13 @@ const ejs = require('ejs');
 
 
 const PORT = process.env.PORT || 5025 ;
-// port = 1905, 
+
 const connectionDB = require('./config/mongodb.js')
-// connectionDB();
+
 
 dotenv.config({ path : './config/config.env'})
 
-// passport
-// const passauth = require('../config/passport')
-// passauth(passport)
+
 require('./config/passport')(passport);
 
 //middleware setup
