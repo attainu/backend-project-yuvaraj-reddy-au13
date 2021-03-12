@@ -1,82 +1,102 @@
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose')
-const dotenv = require('dotenv');
-const morgan = require('morgan');
-const exphbs = require('express-handlebars');
 const path = require('path')
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const passport = require('passport');
-const ejs = require('ejs');
+const express = require('express')
+const mongoose = require('mongoose')
+const dotenv = require('dotenv')
+const morgan = require('morgan')
+const exphbs = require('express-handlebars')
+const methodOverride = require('method-override')
+const passport = require('passport')
+const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
+const connectDB = require('./config/mongodb.js')
+const PORT = process.env.PORT || 5023;
 
+// Load config
+dotenv.config({ path: './config/config.env' })
 
+// Passport config
+require('./config/passport')(passport)
 
-const PORT = process.env.PORT || 5025 ;
+connectDB();
 
-const connectionDB = require('./config/mongodb.js')
+const app = express()
 
+// Body parser
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 
-dotenv.config({ path : './config/config.env'})
+// Method override
+app.use(
+  methodOverride(function (req, res) {
+    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
 
+      let method = req.body._method
+      delete req.body._method
+      return method
+    }
+  })
+)
 
-require('./config/passport')(passport);
-
-//middleware setup
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
-
-
-
-// morgan setup 
-if (process.env.NODE_ENV === 'development'){
-    app.use(morgan('dev'))
+// Logging
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
 }
 
-//static files
+// Handlebars Helpers
+const {
+  formatDate,
+  stripTags,
+  truncate,
+  editIcon,
+  select,
+} = require('./helpers/hbs')
+
+
+app.engine(
+  '.hbs',
+  exphbs({
+    helpers: {
+      formatDate,
+      stripTags,
+      truncate,
+      editIcon,
+      select,
+    },
+    defaultLayout: 'main',
+    extname: '.hbs',
+  })
+)
+app.set('view engine', '.hbs')
+
+// Sessions
+app.use(
+  session({
+    secret: 'mysecret',
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  })
+)
+
+// middleware
+app.use(passport.initialize())
+app.use(passport.session())
+
+// Set global var
+app.use(function (req, res, next) {
+  res.locals.user = req.user || null
+  next()
+})
+
+// Static folder
 app.use(express.static(path.join(__dirname, 'public')))
 
-// hbs setup
-app.engine('hbs', exphbs({defaultLayout : 'main', extname : '.hbs' }))
-app.set('view engine', 'hbs')
-
-// app.engine(
-//     '.hbs',
-//     exphbs({
-//       defaultLayout: 'main',
-//       extname: '.hbs',
-//     })
-//   )
-// app.set('view engine', '.hbs')
+// Routes Controllers
+app.use('/', require('./controllers/indexController'))
+app.use('/auth', require('./controllers/authController'))
+app.use('/stories', require('./controllers/storiesController'))
 
 
-// session
-app.use(session({
-    secret: 'Mysecrete',
-    resave: false,
-    saveUninitialized: false
-    // store : MongoStore({ mongooseConnection : mongoose.connection })
-}))
-
-// passport setup
-app.use(passport.initialize());
-app.use(passport.session());
-
-
-// routes
-// const router = require('./controllers/indexController')
-app.use('/', require('./controllers/indexController'));
-// app.use('/', require('./z_prac_login'))
-app.use('/auth', require('./controllers/authController'));
-
-
-
-app.get('/health', (req, res)=>{
-    res.send('Working Fine!! on PORT : ' + PORT);
-})
 app.listen(PORT, (req, res)=>{
-    console.log(`Server Running In ${process.env.NODE_ENV} Mode`);
-    console.log(`Listening to http://localhost:${PORT}`);
-    
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
 })
